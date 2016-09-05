@@ -1,6 +1,7 @@
 //: Playground - noun: a place where people can play
 
 import UIKit
+import Foundation
 
 
 //Dictionary init
@@ -73,4 +74,49 @@ func createBanana(size size: Int, color: Int) -> Banana {
 }
 
 print("\(createBanana(size: 15, color: 16))")
+
+typealias Payload = [String: AnyObject]
+let TopAppURL = "https://itunes.apple.com/us/rss/topgrossingipadapplications/limit=25/json"
+
+func getTopAppsWithSuccess(success: ((iTunesData: NSData!) -> Void)) {
+    //1
+    //loadDataFromURL(NSURL(string: TopAppURL)!, completion:{(data, error) -> Void in
+        //2
+        //if let data = data {
+            //3
+            //success(iTunesData: data)
+        //}
+    //})
+}
+
+func prettyPrintJson(object: AnyObject?) -> String {
+    var prettyResult: String = ""
+    if object == nil {
+        return ""
+    } else if let resultArray = object as? [AnyObject] {
+        var entries: String = ""
+        for index in 0..<resultArray.count {
+            if (index == 0) {
+                entries = "\(resultArray[index])"
+            } else {
+                entries = "\(entries), \(prettyPrintJson(resultArray[index]))"
+            }
+        }
+        prettyResult = "[\(entries)]"
+    } else if object is NSDictionary  {
+        let objectAsDictionary: [String: AnyObject] = object as! [String: AnyObject]
+        prettyResult = "{"
+        var entries: String = ""
+        for (key,_) in objectAsDictionary {
+            entries = "\"\(entries), \"\(key)\":\(prettyPrintJson(objectAsDictionary[key]))"
+        }
+        prettyResult = "{\(entries)}"
+        return prettyResult
+    } else if let objectAsNumber = object as? NSNumber {
+        prettyResult = "\(objectAsNumber.stringValue)"
+    } else if let objectAsString = object as? NSString {
+        prettyResult = "\"\(objectAsString)\""
+    }
+    return prettyResult
+}
 
